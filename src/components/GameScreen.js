@@ -13,7 +13,6 @@ function GameScreen(props) {
             <h5> {props.roomData.cooldown ? `Action Cooldown: ${props.roomData.cooldown}` : ''} </h5>
             <h5> {props.roomData.exits ? `There are exits to the: ${props.roomData.exits.map(exit => { return `${exit} `})}` : ''}</h5>
         </div>
-        
     )
 }
 
