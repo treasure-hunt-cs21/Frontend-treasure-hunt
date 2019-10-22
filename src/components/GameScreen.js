@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
+import './styles.scss'
+
+
 function GameScreen(props) {
     return (
-        <p> This would be the game messages.</p>
+        <div className="game-screen"> 
+            <p> This would be the game messages.</p> 
+        </div>
+        
     )
 }
 
