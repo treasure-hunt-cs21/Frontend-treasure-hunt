@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import axioswithAuth from './axioswithAuth'
 import axios from 'axios';
 
@@ -10,14 +11,8 @@ let heroku_url = 'https://treasurebuildweek.herokuapp.com'
 
 
 // helper function for taking breaks during cooldown
-function sleep(milliseconds) {
-    console.log('sleeping for: ', milliseconds)
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
-        break;
-      }
-    }
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
 
@@ -50,17 +45,6 @@ function sleep(milliseconds) {
 //     }
 // }
 
-function getCurrentRoom() {
-axioswithAuth().get('/init/')
-    .then(res => {
-        // console.log(res.data)
-        return res.data
-    })
-    .catch(error => {
-        console.error(error)
-    })
-}
-
 async function explore() {
     console.log('exploring')
     let graph = {}
@@ -69,18 +53,22 @@ async function explore() {
     let prevMove = null
     let deadend = false
     let cooldown = 0
+    let abc = 0
 
 
-    while (Object.keys(graph).length < 500) {
+    while (/*Object.keys(graph).length*/ abc < 5) {
+        console.log("in while")
         // Start of movement
+        await sleep(cooldown * 1000)
+        let response = await axioswithAuth().get('/init/')
+        
+        let rawRoomdata = response.data
+        console.log("rrd", rawRoomdata)
+        
         let possible_moves = []
-        let rawRoomdata = {}
-        setTimeout(() => {
-            rawRoomdata = getCurrentRoom()
-            }, (cooldown*1000))
 
         cooldown = rawRoomdata.cooldown
-
+        console.log("cooldown", cooldown)
 
         let currentRoom = {
             room_id: rawRoomdata.room_id,
@@ -115,10 +103,22 @@ async function explore() {
                     console.log(res)
                 })
                 .catch(error => {
+                    console.log("error1", error)
                     console.error(error)
                 })
             })
             .catch(error => {
+                console.log("error2", error)
+                console.error(error)
+            })
+        } else if (prevRoom === null) {
+            axios.post(`${heroku_url}/api/rooms/`, currentRoom)
+            // eslint-disable-next-line no-loop-func
+            .then(res => {
+                console.log("First room posted!")
+            })
+            .catch(error => {
+                console.log("error2", error)
                 console.error(error)
             })
         }
@@ -151,24 +151,17 @@ async function explore() {
                 "direction": `${move}`
             }
 
-            setTimeout(axioswithAuth().post(`${production_url}/move/`, movement_obj)
-            // eslint-disable-next-line no-loop-func
-            .then(res => {
-                console.log(res)
-                cooldown = res.data.cooldown
-            })
-            .catch(error => {
-                console.error(error)
-            }), (cooldown * 1000))
-            
-        
+            await sleep(cooldown * 1000)
+            console.log("before second axios")
+
+            let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
+            cooldown = newResponse.data.cooldown
+            console.log("cooldown2", cooldown)
             prevRoom = currentRoom
             prevMove = move
-        }
+        }               
         // if we are at a deadend, we need to look for the closest room with an unexplored route in our map. 
-        else {
-            break
-        }
+        abc += 1
     }
 }
 
