@@ -51,9 +51,11 @@ function sleep(milliseconds) {
 // }
 
 function getCurrentRoom() {
-axioswithAuth().get('/init/')
+return axioswithAuth().get('/init/')
     .then(res => {
         // console.log(res.data)
+        console.log('get current room')
+        console.log(res.data)
         return res.data
     })
     .catch(error => {
@@ -68,21 +70,25 @@ async function explore() {
     let prevRoom = null
     let prevMove = null
     let deadend = false
-    let cooldown = 0
+    let cooldown = 1
+    let rawRoomdata = {}
+    let possible_moves = []
+    let currentRoom = {}
 
+    rawRoomdata = await getCurrentRoom()
 
     while (Object.keys(graph).length < 500) {
         // Start of movement
-        let possible_moves = []
-        let rawRoomdata = {}
-        setTimeout(() => {
-            rawRoomdata = getCurrentRoom()
-            }, (cooldown*1000))
+        possible_moves = []
+        
+        // setTimeout(() => {
+        //     rawRoomdata = getCurrentRoom()
+        //     }, (cooldown*1000))
 
-        cooldown = rawRoomdata.cooldown
+        // cooldown = rawRoomdata.cooldown
+        // console.log('rawRoomdata', rawRoomdata)
 
-
-        let currentRoom = {
+        currentRoom = {
             room_id: rawRoomdata.room_id,
             title: rawRoomdata.title,
             description: rawRoomdata.description,
@@ -151,23 +157,25 @@ async function explore() {
                 "direction": `${move}`
             }
 
-            setTimeout(axioswithAuth().post(`${production_url}/move/`, movement_obj)
-            // eslint-disable-next-line no-loop-func
-            .then(res => {
-                console.log(res)
-                cooldown = res.data.cooldown
-            })
-            .catch(error => {
-                console.error(error)
-            }), (cooldown * 1000))
-            
+            console.log('Moving after: ', cooldown)
+            setTimeout(() => {
+                axioswithAuth().post(`${production_url}/move/`, movement_obj)
+                .then(res => {
+                    console.log('Successfully Moved.')
+                    cooldown = res.data.cooldown
+                    rawRoomdata = res.data
+                })
+                .catch(error => {
+                    console.error(error)
+                })
+            }, (cooldown * 1000))
         
             prevRoom = currentRoom
             prevMove = move
         }
         // if we are at a deadend, we need to look for the closest room with an unexplored route in our map. 
         else {
-            break
+          break
         }
     }
 }
