@@ -8,7 +8,7 @@ import { Queue, Stack } from './utilities'
 
 let production_url = 'https://lambda-treasure-hunt.herokuapp.com/api/adv'
 let heroku_url = 'https://treasurebuildweek.herokuapp.com'
-
+let opp_moves = {'n' : 's', 's' : 'n', 'e': 'w', 'w': 'e'}
 
 // helper function for taking breaks during cooldown
 function sleep(ms) {
@@ -54,23 +54,32 @@ async function explore() {
     let deadend = false
     let cooldown = 0
     let abc = 0
+    let rawRoomdata = {}
+    let currentRoom = {}
+    
+    let graph_response = await axios(`${heroku_url}/api/rooms/`)
+    console.log(graph_response.data)
+    graph_response.data.forEach(room => {
+        graph[room.room_id] = {}
+        graph[room.room_id]['n'] = room.n
+        graph[room.room_id]['s'] = room.s
+        graph[room.room_id]['e'] = room.e
+        graph[room.room_id]['w'] = room.w
+    })
 
+    // console.log(graph)
 
-    while (/*Object.keys(graph).length*/ abc < 5) {
+    let response = await axioswithAuth().get('/init/')
+    rawRoomdata = response.data
+
+    while (/*Object.keys(graph).length*/ abc < 10) {
         console.log("in while")
         // Start of movement
-        await sleep(cooldown * 1000)
-        let response = await axioswithAuth().get('/init/')
-        
-        let rawRoomdata = response.data
-        console.log("rrd", rawRoomdata)
-        
         let possible_moves = []
 
         cooldown = rawRoomdata.cooldown
         console.log("cooldown", cooldown)
-
-        let currentRoom = {
+        currentRoom = {
             room_id: rawRoomdata.room_id,
             title: rawRoomdata.title,
             description: rawRoomdata.description,
@@ -78,6 +87,9 @@ async function explore() {
             elevation: rawRoomdata.elevation,
             terrain: rawRoomdata.terrain,
         }
+
+        console.log("currentRoom", currentRoom)
+        console.log("prevRoom", prevRoom)
 
         // if current room isn't in graph
         if (!graph[currentRoom.room_id]) {
@@ -92,7 +104,12 @@ async function explore() {
             // send post to update room directions
             // POST '/api/rooms/' currentRoom
             // PUT '/api/rooms/' ?currentRoom= ,previousRoom= ,previousDirection= ,
+            graph[prevRoom.room_id][prevMove] = currentRoom.room_id
+            graph[currentRoom.room_id][opp_moves[prevMove]] = prevRoom.room_id
+            // updating local map
 
+
+            
             axios.post(`${heroku_url}/api/rooms/`, currentRoom)
             // eslint-disable-next-line no-loop-func
             .then(res => {
@@ -123,9 +140,6 @@ async function explore() {
             })
         }
 
-        // console.log(graph)
-        // console.log(currentRoom)
-        // console.log(graph[currentRoom.room_id])
 
         if (graph[currentRoom.room_id].n === 999 || graph[currentRoom.room_id].s === 999 || graph[currentRoom.room_id].w === 999 || graph[currentRoom.room_id].e === 999) {
             deadend = false
@@ -156,17 +170,54 @@ async function explore() {
 
             let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
             cooldown = newResponse.data.cooldown
-            console.log("cooldown2", cooldown)
+            rawRoomdata = newResponse.data
+            // console.log("cooldown2", cooldown)
             prevRoom = currentRoom
             prevMove = move
-        }               
+        } else {
+            //is a deadend
+            console.log('Deadend!')
+            
+            //find closest unexplored room
+            let route_to_room = bfs(graph, currentRoom.room_id)
+
+            if (route_to_room) {
+                route_to_room.shift()
+            }
+
+        }              
         // if we are at a deadend, we need to look for the closest room with an unexplored route in our map. 
         abc += 1
     }
 }
 
- 
+function bfs(graph, Room) {
 
+    let queue = new Queue()
+    let visited = new Set()
+    queue.enqueue([Room])
+
+    while (queue.size() > 0) {
+        let route = queue.dequeue()
+        let room = route[route.length - 1]
+
+        if (!visited.has(room)) {
+            visited.add(room)
+            // #if we haven't visited it, check all it's neighbors
+            for (let direction in graph[room]) {
+                if (graph[room][direction] === 999) {
+                    return route
+                }
+                else {
+                    let route_copy = [...route]
+                    let next_room = graph[room][direction]
+                    route_copy.push(next_room)
+                    queue.enqueue(route_copy)
+                }   
+            }               
+        }
+    }
+}
     //     #if we are at a deadend, what do we do? We backtrack, and find the closest room with an unexplored route
     //     else:
     //         #use BFS to find the closest room with unexplored route. Will return a list of roomIDs
