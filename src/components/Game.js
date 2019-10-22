@@ -4,6 +4,8 @@ import axios from 'axios';
 import GameScreen from './GameScreen'
 import GameControls from './GameControls'
 
+import './styles.scss'
+
 function GameDisplay(props) {
     const [data, setData] = useState({});
 

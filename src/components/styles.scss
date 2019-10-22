@@ -1,23 +1,47 @@
 // TopBar styles
 
+$color1: #0892A5;
+$color2: #06908F;
+$color3: #0CA4A5;
+$color4: #DBB68F;
+$color5: #BB7E5D;
+
+
 .topbar-container {
+    // background-image: linear-gradient(rgba(0, 0, 0, 0.15),
+    // rgba(0, 0, 0, 0.15)), url('../assets/palm-trees.jpg');
+    border-top: 5px solid $color5;
+    border-bottom: 5px solid $color5;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+
+    h1 {
+        color: $color5;
+    }
 }
 
 
 // Game
 .game-display {
     display: flex;
-    
+    justify-content: center;
 }
 
 // GameScreen
 
 .game-screen {
-    width: 40%;
-    height: 300px;
+    width: 25%;
+    height: 500px;
     color: white;
     background-color: black;
+    padding: 10px;
+}
+
+// controls
+
+.controls-container {
+    padding: 10px;
+    border: 1px solid black;
+    width: 25%;
 }
