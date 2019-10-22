@@ -34,13 +34,14 @@ $color5: #BB7E5D;
     width: 25%;
     height: 500px;
     color: white;
-    background-color: black;
+    background-color: rgb(36, 36, 36);
     padding: 10px;
 }
 
 // controls
 
 .controls-container {
+    background-color: $color4;
     padding: 10px;
     border: 1px solid black;
     width: 25%;
