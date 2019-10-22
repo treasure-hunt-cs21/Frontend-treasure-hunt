@@ -1,12 +1,11 @@
 import React from 'react';
+import TopBar from '../components/TopBar';
 
 const AboutPage = () => {
     return(
         <>
         <div>
-            <h1>
-                About
-            </h1>
+            <TopBar where="about"/>
         </div>
         </>
     )

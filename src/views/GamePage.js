@@ -1,12 +1,13 @@
 import React from 'react';
-
+import TopBar from '../components/TopBar'
 
 const GamePage = () => {
     return(
-        <div>
-            <h1>
-                Game View
-            </h1>
+        <div className="game-page">
+            <TopBar where='game'/>
+            <div className="game-container">
+            
+            </div>
         </div>
     )
 }
