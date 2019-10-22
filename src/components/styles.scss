@@ -1,0 +1,23 @@
+// TopBar styles
+
+.topbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+// Game
+.game-display {
+    display: flex;
+    
+}
+
+// GameScreen
+
+.game-screen {
+    width: 40%;
+    height: 300px;
+    color: white;
+    background-color: black;
+}
