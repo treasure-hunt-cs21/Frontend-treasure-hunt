@@ -21,35 +21,6 @@ function sleep(milliseconds) {
   }
 
 
-// function bfs(Graph, Room) {
-
-// let queue = new Queue()
-// let visited = new Set()
-// queue.enqueue([Room])
-
-// while (queue.size() > 0) {
-//     let route = queue.dequeue()
-//     let room = route[-1]
-
-//     if (visited.has(room) == false) {
-//         visited.add(room)
-
-//         //if we haven't visited it, check all it's neighbors
-//         for (let direction in graph[room]) {
-//             if graph[room][direction] is '?':
-//                 return route
-            
-//             //if it's not ?, it's a possible route to a room with an undiscovered room. Add it to the queue.
-//             // else:
-//             //     route_copy = route.copy()
-//             //     next_room = graph[room][direction]
-//             //     route_copy.append(next_room)
-//             //     queue.enqueue(route_copy)
-//         }   
-//         }
-//     }
-// }
-
 function getCurrentRoom() {
 return axioswithAuth().get('/init/')
     .then(res => {
@@ -61,6 +32,20 @@ return axioswithAuth().get('/init/')
     .catch(error => {
         console.error(error)
     })
+}
+
+function moveRoom(movement) {
+    return axioswithAuth().post(`${production_url}/move/`, movement)
+    .then(res => {
+        console.log('Successfully Moved.')
+        console.log('New room:')
+        console.log(res.data)
+        return res.data
+    })
+    .catch(error => {
+        console.error(error)
+    })
+
 }
 
 async function explore() {
@@ -81,13 +66,6 @@ async function explore() {
         // Start of movement
         possible_moves = []
         
-        // setTimeout(() => {
-        //     rawRoomdata = getCurrentRoom()
-        //     }, (cooldown*1000))
-
-        // cooldown = rawRoomdata.cooldown
-        // console.log('rawRoomdata', rawRoomdata)
-
         currentRoom = {
             room_id: rawRoomdata.room_id,
             title: rawRoomdata.title,
@@ -129,10 +107,6 @@ async function explore() {
             })
         }
 
-        // console.log(graph)
-        // console.log(currentRoom)
-        // console.log(graph[currentRoom.room_id])
-
         if (graph[currentRoom.room_id].n === 999 || graph[currentRoom.room_id].s === 999 || graph[currentRoom.room_id].w === 999 || graph[currentRoom.room_id].e === 999) {
             deadend = false
         } else {
@@ -157,19 +131,8 @@ async function explore() {
                 "direction": `${move}`
             }
 
-            console.log('Moving after: ', cooldown)
-            setTimeout(() => {
-                axioswithAuth().post(`${production_url}/move/`, movement_obj)
-                .then(res => {
-                    console.log('Successfully Moved.')
-                    cooldown = res.data.cooldown
-                    rawRoomdata = res.data
-                })
-                .catch(error => {
-                    console.error(error)
-                })
-            }, (cooldown * 1000))
-        
+            rawRoomdata = await moveRoom(movement_obj)
+
             prevRoom = currentRoom
             prevMove = move
         }
@@ -210,3 +173,34 @@ async function explore() {
 
 
 export default explore
+
+
+
+// function bfs(Graph, Room) {
+
+// let queue = new Queue()
+// let visited = new Set()
+// queue.enqueue([Room])
+
+// while (queue.size() > 0) {
+//     let route = queue.dequeue()
+//     let room = route[-1]
+
+//     if (visited.has(room) == false) {
+//         visited.add(room)
+
+//         //if we haven't visited it, check all it's neighbors
+//         for (let direction in graph[room]) {
+//             if graph[room][direction] is '?':
+//                 return route
+            
+//             //if it's not ?, it's a possible route to a room with an undiscovered room. Add it to the queue.
+//             // else:
+//             //     route_copy = route.copy()
+//             //     next_room = graph[room][direction]
+//             //     route_copy.append(next_room)
+//             //     queue.enqueue(route_copy)
+//         }   
+//         }
+//     }
+// }
