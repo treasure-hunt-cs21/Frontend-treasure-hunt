@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import axioswithAuth from '../helpers/axioswithAuth';
 
+import explore from '../helpers/explore'
+
 import GameScreen from './GameScreen'
 import GameControls from './GameControls'
 
@@ -27,8 +29,14 @@ function GameDisplay(props) {
             })
     }
 
+    const handleExplore = e => {
+        e.preventDefault()
+        explore()
+    }
+
     return (
         <div className="game-display"> 
+            <button onClick={handleExplore}> explore </button>
             <GameScreen roomData={roomData}/>
             <GameControls handleLocation={handleLocation} roomData={roomData}/>
         </div>
