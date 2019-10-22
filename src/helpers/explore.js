@@ -11,6 +11,7 @@ let heroku_url = 'https://treasurebuildweek.herokuapp.com'
 
 // helper function for taking breaks during cooldown
 function sleep(milliseconds) {
+    console.log('sleeping for: ', milliseconds)
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
       if ((new Date().getTime() - start) > milliseconds){
@@ -50,7 +51,7 @@ function sleep(milliseconds) {
 // }
 
 function getCurrentRoom() {
-    return axioswithAuth().get('/init/')
+axioswithAuth().get('/init/')
     .then(res => {
         // console.log(res.data)
         return res.data
@@ -70,13 +71,16 @@ async function explore() {
     let cooldown = 0
 
 
-    // while (graph.length < 500) {
+    while (Object.keys(graph).length < 500) {
         // Start of movement
         let possible_moves = []
-        let rawRoomdata = await getCurrentRoom()
+        let rawRoomdata = {}
+        setTimeout(() => {
+            rawRoomdata = getCurrentRoom()
+            }, (cooldown*1000))
+
         cooldown = rawRoomdata.cooldown
-        console.log('cooldown', cooldown)
-        
+
 
         let currentRoom = {
             room_id: rawRoomdata.room_id,
@@ -100,14 +104,11 @@ async function explore() {
             // send post to update room directions
             // POST '/api/rooms/' currentRoom
             // PUT '/api/rooms/' ?currentRoom= ,previousRoom= ,previousDirection= ,
-            sleep(cooldown * 1000)
 
             axios.post(`${heroku_url}/api/rooms/`, currentRoom)
+            // eslint-disable-next-line no-loop-func
             .then(res => {
                 console.log(res)
-                cooldown = res.data.cooldown
-
-                sleep(cooldown * 1000)
                 axios.put(`${heroku_url}/api/rooms?previousRoom=${prevRoom.room_id}&currentRoom=${currentRoom.room_id}&previousDirection=${prevMove}`)
                 .then(res => {
                     console.log('Move updated.')
@@ -143,31 +144,33 @@ async function explore() {
             // Pick a move randomly
             let move = possible_moves[Math.floor(Math.random() * possible_moves.length)]
             traversalPath.push(move)
-            console.log(move)
+            // console.log(move)
 
             // ACTUALLY MOVE?!
             let movement_obj = {
                 "direction": `${move}`
             }
 
-            sleep(cooldown*1000)
-            axioswithAuth().post(`${production_url}/move/`, movement_obj)
+            setTimeout(axioswithAuth().post(`${production_url}/move/`, movement_obj)
+            // eslint-disable-next-line no-loop-func
             .then(res => {
                 console.log(res)
                 cooldown = res.data.cooldown
             })
             .catch(error => {
                 console.error(error)
-            })
+            }), (cooldown * 1000))
+            
         
             prevRoom = currentRoom
             prevMove = move
         }
         // if we are at a deadend, we need to look for the closest room with an unexplored route in our map. 
         else {
-
+            break
         }
     }
+}
 
  
 
