@@ -9,6 +9,17 @@ let production_url = 'https://lambda-treasure-hunt.herokuapp.com/api/adv'
 let heroku_url = 'https://treasurebuildweek.herokuapp.com'
 
 
+// helper function for taking breaks during cooldown
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds){
+        break;
+      }
+    }
+  }
+
+
 // function bfs(Graph, Room) {
 
 // let queue = new Queue()
@@ -62,7 +73,6 @@ async function explore() {
     // while (graph.length < 500) {
         // Start of movement
         let possible_moves = []
-        console.log('Inside while loop.')
         let rawRoomdata = await getCurrentRoom()
         cooldown = rawRoomdata.cooldown
         console.log('cooldown', cooldown)
@@ -90,9 +100,14 @@ async function explore() {
             // send post to update room directions
             // POST '/api/rooms/' currentRoom
             // PUT '/api/rooms/' ?currentRoom= ,previousRoom= ,previousDirection= ,
+            sleep(cooldown * 1000)
+
             axios.post(`${heroku_url}/api/rooms/`, currentRoom)
             .then(res => {
                 console.log(res)
+                cooldown = res.data.cooldown
+
+                sleep(cooldown * 1000)
                 axios.put(`${heroku_url}/api/rooms?previousRoom=${prevRoom.room_id}&currentRoom=${currentRoom.room_id}&previousDirection=${prevMove}`)
                 .then(res => {
                     console.log('Move updated.')
@@ -107,9 +122,9 @@ async function explore() {
             })
         }
 
-        console.log(graph)
-        console.log(currentRoom)
-        console.log(graph[currentRoom.room_id])
+        // console.log(graph)
+        // console.log(currentRoom)
+        // console.log(graph[currentRoom.room_id])
 
         if (graph[currentRoom.room_id].n === 999 || graph[currentRoom.room_id].s === 999 || graph[currentRoom.room_id].w === 999 || graph[currentRoom.room_id].e === 999) {
             deadend = false
@@ -128,33 +143,33 @@ async function explore() {
             // Pick a move randomly
             let move = possible_moves[Math.floor(Math.random() * possible_moves.length)]
             traversalPath.push(move)
+            console.log(move)
 
             // ACTUALLY MOVE?!
             let movement_obj = {
-                direction: move
+                "direction": `${move}`
             }
+
+            sleep(cooldown*1000)
             axioswithAuth().post(`${production_url}/move/`, movement_obj)
             .then(res => {
                 console.log(res)
+                cooldown = res.data.cooldown
             })
             .catch(error => {
                 console.error(error)
             })
-            
-
+        
             prevRoom = currentRoom
             prevMove = move
         }
+        // if we are at a deadend, we need to look for the closest room with an unexplored route in our map. 
+        else {
+
+        }
     }
 
-    //         #Move, and add it to our path
-    //         traversalPath.append(move)
-
-    //         #Move the player, which will help change current room in the next loop
-    //         player.travel(move)
-
-    //         prevRoom = currentRoom
-    //         prevMove = move
+ 
 
     //     #if we are at a deadend, what do we do? We backtrack, and find the closest room with an unexplored route
     //     else:
