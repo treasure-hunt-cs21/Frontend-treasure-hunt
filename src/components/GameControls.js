@@ -60,7 +60,6 @@ const submitDestination = e => {
 
             <div className="misc-buttons">
                 <button onClick={props.handleLocation}> Current Location </button>
-                <button> Maybe pick something up? </button>  
             </div>
         </div>
     )
