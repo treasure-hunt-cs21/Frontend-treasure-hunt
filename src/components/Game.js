@@ -5,6 +5,8 @@ import explore from '../helpers/explore'
 import GameScreen from './GameScreen'
 import GameControls from './GameControls'
 import GameInventory from './GameInventory'
+import Timer from './Timer'
+
 import './styles.scss'
 
 let heroku_url = 'https://treasurebuildweek.herokuapp.com'
