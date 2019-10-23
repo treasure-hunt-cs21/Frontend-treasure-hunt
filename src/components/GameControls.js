@@ -33,6 +33,21 @@ const submitDestination = e => {
     takeRoute(props.map, props.roomData.room_id, dest)
 }
 
+
+const submitItemDestination = e => {
+    e.preventDefault();
+    //need to find room id of destination
+    let dest = ''
+
+    for (let i = 0; i < 500; i++) {
+        if (props.map[i].title == destination){
+            dest = i
+        }
+    }
+    console.log('Heading towards:', dest);
+    takeRoute(props.map, props.roomData.room_id, dest)
+}
+
     return (
         <div className="controls-container">
             <p> Click a direction to travel, or use the automated explore button to map the islands. </p>
@@ -54,6 +69,7 @@ const submitDestination = e => {
                 <button onClick={submitDestination}> 
                 Traverse 
                 </button>
+                <button onClick={submitItemDestination}>Item Traverse </button>
             </div>
 
             <div className="misc-buttons">
