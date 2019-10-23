@@ -39,7 +39,7 @@ function bfs(graph, starting_room, target_room) {
 }
 
 // Function that will actually take the route and travel to the room.
-async function takeRoute(graph, starting_room, target_room) {
+async function takeItemRoute(graph, starting_room, target_room) {
     console.log("===== Travelling to room =====")
     console.log("Starting location:", starting_room)
     console.log("Target location:", target_room)
@@ -77,8 +77,8 @@ async function takeRoute(graph, starting_room, target_room) {
                         cooldown = newResponse.data.cooldown
                         currentRoom = newResponse.data.room_id
 
-                        if (currentRoom.items && currentRoom.items.length > 0) {
-                            console.log('items found in room:', currentRoom.room_id)
+                        if (newResponse.data.items && newResponse.data.items.length > 0) {
+                            console.log('items found in room:', currentRoom)
                             break
                         }
 
@@ -92,4 +92,4 @@ async function takeRoute(graph, starting_room, target_room) {
     }   
 }
 
-export default takeRoute
+export default takeItemRoute

@@ -3,6 +3,7 @@ import axios from 'axios';
 
 
 import takeRoute from '../helpers/traversal'
+import takeItemRoute from '../helpers/itemtraversal'
 
 import './styles.scss'
 
@@ -45,7 +46,7 @@ const submitItemDestination = e => {
         }
     }
     console.log('Heading towards:', dest);
-    takeRoute(props.map, props.roomData.room_id, dest)
+    takeItemRoute(props.map, props.roomData.room_id, dest)
 }
 
     return (
