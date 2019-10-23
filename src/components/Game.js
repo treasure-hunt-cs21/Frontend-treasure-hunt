@@ -91,8 +91,7 @@ function GameDisplay(props) {
             .then(res => {
                 console.log(res)
                 setCooldown(res.data.cooldown)
-                sleep(1000)
-                updateStatus()
+                setTimeout(() => updateStatus(), 7600)
             })
             .catch(error => {
                 console.error(error)
@@ -100,13 +99,13 @@ function GameDisplay(props) {
     }
 
     // Drop Item
-    const dropItem = (e, item) => {
+    const dropItem = (item) => {
         console.log('Item dropped');
         axioswithAuth().post('/drop/', {"name": item})
             .then(res => {
+                console.log(res.data)
                 setCooldown(res.data.cooldown)
-                sleep(2000)
-                updateStatus()
+                setTimeout(() => updateStatus(), 7600)
             })
             .catch(error => {
                 console.error(error)
@@ -114,7 +113,7 @@ function GameDisplay(props) {
     }
 
     // Sell item to shop. Must be at Shop to sell.
-    const sellItem = (e, item) => {
+    const sellItem = (item) => {
         console.log('Selling item', item);
         axioswithAuth().post('/sell/', {"name": item})
             .then(res => {
