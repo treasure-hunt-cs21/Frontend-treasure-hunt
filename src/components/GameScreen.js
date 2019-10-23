@@ -34,16 +34,3 @@ function GameScreen(props) {
     )
 }
 export default GameScreen;
-
-// {props.roomData.items  ? 
-//     `The items in the room are: ${props.roomData.items.map(item => 
-//         { 
-//             console.log(item)
-//             return (
-//                 <>
-//                     <p> {item} </p>
-//                     {/* <button onClick={e => props.pickItem(e, item)}>Pick</button> */}
-//                 </>
-//             )
-//         })}` 
-//     : ''}

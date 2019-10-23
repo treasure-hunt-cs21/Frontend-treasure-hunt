@@ -36,6 +36,10 @@ function GameDisplay(props) {
             graph[room.room_id]['w'] = room.w
         })
         setMap(graph)
+
+        updateStatus()
+        sleep(1000)
+        handleLocation()
         })
         .catch(err => {
             console.error(err)
@@ -76,36 +80,31 @@ function GameDisplay(props) {
             })
     }
     const pickItem = (e, item) => {
-        e.preventDefault();
         console.log('Item picked');
         axioswithAuth().post('/take/', {"name": item})
             .then(res => {
                 console.log(res)
-                // setCooldown(res.data.cooldown).then(() => {
-                //     sleep(cooldown * 1000)
-                //     updateStatus()
-                // })
+                setCooldown(res.data.cooldown)
+                sleep(1000)
+                updateStatus()
             })
             .catch(error => {
                 console.error(error)
             })
     }
     const dropItem = (e, item) => {
-        e.preventDefault();
         console.log('Item dropped');
         axioswithAuth().post('/drop/', {"name": item})
             .then(res => {
-                setCooldown(res.data.cooldown).then(() => {
-                    sleep(cooldown * 1000)
-                    updateStatus()
-                })
+                setCooldown(res.data.cooldown)
+                sleep(2000)
+                updateStatus()
             })
             .catch(error => {
                 console.error(error)
             })
     }
     const sellItem = (e, item) => {
-        e.preventDefault();
         console.log('Selling item');
         axioswithAuth().post('/sell/', {"name": item})
             .then(res => {
@@ -129,22 +128,36 @@ function GameDisplay(props) {
             })
     }
     const updateStatus = e => {
-        e.preventDefault()
         axioswithAuth().post('/status/')
         .then(results => {
             console.log("Updating Status")
             console.log(results.data)
-            setStats(results.data).then(() => {
-                setCooldown(results.data.cooldown)
-            })
+            setStats(results.data)
+            setCooldown(results.data.cooldown)
         })
     }
     return (
         <div className="game-display"> 
-            <button onClick={handleExplore}> explore </button>
-            <GameScreen roomData={roomData} cooldown={cooldown} pickItem={pickItem}/>
-            <GameControls pickItem={pickItem} handleMove={handleMove} handleLocation={handleLocation} roomData={roomData} map={map}/>
-            <GameInventory sellItem={sellItem} dropItem={dropItem} stats={stats} updateStatus={updateStatus} cooldown={cooldown} setCooldown={setCooldown}/>
+            {/* <button onClick={handleExplore}> explore </button> */}
+            <GameScreen 
+                roomData={roomData} 
+                cooldown={cooldown} 
+                pickItem={pickItem}/>
+
+            <GameControls 
+                pickItem={pickItem} 
+                handleMove={handleMove} 
+                handleLocation={handleLocation} 
+                roomData={roomData} 
+                map={map}/>
+
+            <GameInventory 
+                sellItem={sellItem} 
+                dropItem={dropItem} 
+                stats={stats} 
+                updateStatus={updateStatus} 
+                cooldown={cooldown} 
+                setCooldown={setCooldown}/>
         </div>
     )
 }

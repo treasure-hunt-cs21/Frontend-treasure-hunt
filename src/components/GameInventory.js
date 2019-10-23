@@ -34,20 +34,9 @@ curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607'
 }
  */
 
+
 function GameInventory(props) {
-    const [stats, setStats] = useState({})
     const [coins, setCoins] = useState('')
-
-    const updateStatus = e => {
-        e.preventDefault()
-        axioswithAuth().post('/status/')
-        .then(results => {
-            console.log("Updating Status")
-            console.log(results.data)
-            setStats(results.data)
-        })
-    }
-
     const updateLambdaCoins = e => {
         e.preventDefault()
         axioswithAuth().get('https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/')
@@ -58,24 +47,54 @@ function GameInventory(props) {
     }
     
     return (
-        <div className="game-inventory">
-            <button onClick={updateStatus}> Check Status</button>
-            <p> Strength: { stats.strength ? stats.strength : ''}</p>
-            <p> Encumbrance: {stats.encumbrance ? stats.encumbrance : ''}</p>
-            <p> Speed: {stats.speed ? stats.speed : ''}</p>
-
-            <p> Gold: {stats.gold ? stats.gold : ''}</p>
-
+        <div className="player-status">
+            <button onClick={props.updateStatus}> Check Status</button>
+            <p> Strength: { props.stats.strength ? props.stats.strength : ''}</p>
+            <p> Encumbrance: {props.stats.encumbrance ? props.stats.encumbrance : ''}</p>
+            <p> Speed: {props.stats.speed ? props.stats.speed : ''}</p>
+            <p> Gold: {props.stats.gold ? props.stats.gold : ''}</p>
+            <div className="player-inventory">
+                Currently Carrying:
+                <ul>
+                    {props.stats.inventory ? props.stats.inventory.map(item =>
+                    {
+                        return (<>
+                            <li> {item} </li>
+                            <button onClick={e => props.dropItem(e, item)}>Drop Item</button>
+                            <button>Sell Item</button> </>
+                        )}) : 'Nothing!'}
+                </ul>
+                </div>
             <div className="lambda-coins-display"> 
                 <button onClick={updateLambdaCoins}
                 className="lambda-coin-update-btn"> 
                     Check Lambda Coins
                 </button>
                 <p> Lambda Coin: {coins ? coins : ''} </p>
-
             </div>
         </div>
     )
 }
-
 export default GameInventory;
+
+
+// {props.stats.items ? 
+//     `Items: ${props.stats.inventory.map(item => 
+//         { 
+//             return (
+//                 <div>
+//                     {item}
+//                     <button onClick={e => props.dropItem(e, item)}>Drop</button>
+//                     <button onClick={e => props.sellItem(e, item)}>sell</button>
+//                 </div>
+//             )
+//         })}` 
+//     : 
+//     ''}
+
+{/* <div className="player-inventory">
+                Currently Carrying:
+                <ul>
+                    {stats}
+                </ul>
+</div> */}
