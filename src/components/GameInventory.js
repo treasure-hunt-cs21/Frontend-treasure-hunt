@@ -37,6 +37,7 @@ curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607'
 
 function GameInventory(props) {
     const [coins, setCoins] = useState('')
+
     const updateLambdaCoins = e => {
         e.preventDefault()
         axioswithAuth().get('https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/')
@@ -46,6 +47,17 @@ function GameInventory(props) {
         })
     }
     
+    // async function sellAllHandler() {
+    //     console.log(props.stats.inventory)
+    //     for (let i = 0; i < props.stats.inventory.length; i++) {
+    //         if (i === 0) {
+    //             props.sellItem(props.stats.inventory[i])
+    //         } else {
+    //             setTimeout(() => props.sellItem(props.stats.inventory[i]), i * 8500)
+    //         }
+    //     }
+    // }
+
     return (
         <div className="player-status">
             <button onClick={props.updateStatus}> Check Status</button>
@@ -55,13 +67,14 @@ function GameInventory(props) {
             <p> Gold: {props.stats.gold ? props.stats.gold : ''}</p>
             <div className="player-inventory">
                 Currently Carrying:
+                {/* {props.stats.inventory ? <button onClick={sellAllHandler}> Sell All</button> : null} */}
                 <ul>
                     {props.stats.inventory ? props.stats.inventory.map(item =>
                     {
                         return (<>
                             <li> {item} </li>
-                            <button onClick={e => props.dropItem(e, item)}>Drop Item</button>
-                            <button onClick = {e => props.sellItem(e, item)}>Sell Item</button> </>
+                            <button onClick={e => props.dropItem(item)}>Drop Item</button>
+                            <button onClick = {e => props.sellItem(item)}>Sell Item</button> </>
                         )}) : 'Nothing!'}
                 </ul>
                 </div>
