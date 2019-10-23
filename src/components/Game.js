@@ -120,18 +120,7 @@ function GameDisplay(props) {
             .then(res => {
                 console.log('Confirming Item Sale.')
                 console.log(res.data)
-                sleep(3000)
-                axioswithAuth().post('/sell/', {"name": item, "confirm": "yes"})
-                    .then(res => {
-                        console.log('Item Sold.')
-                        console.log(res.data)
-                        setCooldown(res.data.cooldown)
-                        sleep(1000)
-                        updateStatus()
-                    })
-                    .catch(error => {
-                        console.error(error)
-                    })
+                setTimeout(() => confirmSale(item), 3500)
                 })
             .catch(error => {
                 console.error(error)
@@ -139,6 +128,26 @@ function GameDisplay(props) {
     }
 
     // Updates player information (not roomData)
+    const confirmSale = (item) => {
+        console.log('inside confirmSale')
+        let confirm_obj = {
+            'name': `${item}`,
+            'confirm': "yes",
+        }
+
+        console.log(confirm_obj)
+        axioswithAuth().post('/sell/', confirm_obj)
+            .then(res => {
+                console.log('Item Sold.')
+                console.log(res.data)
+                setCooldown(res.data.cooldown)
+                setTimeout(() => updateStatus(), 3500)
+                })
+            .catch(error => {
+                console.error(error)
+                })
+    }
+
     const updateStatus = e => {
         axioswithAuth().post('/status/')
         .then(results => {
