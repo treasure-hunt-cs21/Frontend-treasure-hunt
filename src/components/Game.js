@@ -80,10 +80,11 @@ function GameDisplay(props) {
         console.log('Item picked');
         axioswithAuth().post('/take/', {"name": item})
             .then(res => {
-                setCooldown(res.data.cooldown).then(() => {
-                    sleep(cooldown * 1000)
-                    updateStatus()
-                })
+                console.log(res)
+                // setCooldown(res.data.cooldown).then(() => {
+                //     sleep(cooldown * 1000)
+                //     updateStatus()
+                // })
             })
             .catch(error => {
                 console.error(error)
@@ -141,7 +142,7 @@ function GameDisplay(props) {
     return (
         <div className="game-display"> 
             <button onClick={handleExplore}> explore </button>
-            <GameScreen roomData={roomData} cooldown={cooldown}/>
+            <GameScreen roomData={roomData} cooldown={cooldown} pickItem={pickItem}/>
             <GameControls pickItem={pickItem} handleMove={handleMove} handleLocation={handleLocation} roomData={roomData} map={map}/>
             <GameInventory sellItem={sellItem} dropItem={dropItem} stats={stats} updateStatus={updateStatus} cooldown={cooldown} setCooldown={setCooldown}/>
         </div>

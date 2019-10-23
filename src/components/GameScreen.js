@@ -9,7 +9,6 @@ function GameScreen(props) {
         e.preventDefault()
         console.log(e.target.value)
         setItem(e.target.value)
-
     }
 
     return (
@@ -23,11 +22,13 @@ function GameScreen(props) {
             <h5> {props.roomData.exits ? `There are exits to the: ${props.roomData.exits.map(exit => { return `${exit} `})}` : ''}</h5>
             <div>Items in this room:
                 <ul>
-                    {props.roomData.items ? props.roomData.items.map(item => { return <li> {item} </li>}) : ''}
+                    {props.roomData.items ? props.roomData.items.map(item => { return <li> {item} </li>}) 
+                    : ''}
                 </ul>
                 <input type="text"
-                placeholder="item"/>
-                <button> Pick up item</button>
+                placeholder="item"
+                onChange={handleChanges}/>
+                <button onClick={e => props.pickItem(e, item)}> Pick up item</button>
             </div>
         </div>
     )
