@@ -142,7 +142,7 @@ function GameDisplay(props) {
         <div className="game-display"> 
             <button onClick={handleExplore}> explore </button>
             <GameScreen roomData={roomData} cooldown={cooldown}/>
-            <GameControls pickItem={pickItem} handleMove={handleMove} handleLocation={handleLocation} roomData={roomData}/>
+            <GameControls pickItem={pickItem} handleMove={handleMove} handleLocation={handleLocation} roomData={roomData} map={map}/>
             <GameInventory sellItem={sellItem} dropItem={dropItem} stats={stats} updateStatus={updateStatus} cooldown={cooldown} setCooldown={setCooldown}/>
         </div>
     )

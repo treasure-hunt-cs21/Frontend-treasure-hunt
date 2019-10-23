@@ -43,7 +43,7 @@ async function takeRoute(graph, starting_room, target_room) {
     console.log("===== Travelling to room =====")
     console.log("Starting location:", starting_room)
     console.log("Target location:", target_room)
-    
+
 
     console.log('====== Finding route =======')
     let route_to_take = bfs(graph, starting_room, target_room)
@@ -87,3 +87,5 @@ async function takeRoute(graph, starting_room, target_room) {
         console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
     }   
 }
+
+export default takeRoute

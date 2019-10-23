@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
+import takeRoute from '../helpers/traversal'
+
 import './styles.scss'
 
 function GameControls(props) {
@@ -18,7 +21,17 @@ const handleChanges = e => {
 
 const submitDestination = e => {
     e.preventDefault();
-    console.log('Heading towards:', );
+    //need to find room id of destination
+    let dest = ''
+
+    for (let i = 0; i < 500; i++) {
+        if (props.map[i].title == destination){
+            dest = i
+        }
+    }
+    console.log('Heading towards:', dest);
+    // async function takeRoute(graph, starting_room, target_room)
+    // takeRoute(props.map, props.roomData.room_id, destination)
 }
 
     return (
