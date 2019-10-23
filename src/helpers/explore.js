@@ -44,6 +44,10 @@ async function explore() {
     rawRoomdata = response.data
 
     while (Object.keys(graph).length < 500) {
+        abc++
+        if (abc > 50) {
+
+        }
         console.log('==================top of while loop =======================')
         // console.log('count is:', abc)
         // abc += 1
