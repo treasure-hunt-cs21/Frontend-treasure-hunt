@@ -29,6 +29,7 @@ function GameDisplay(props) {
             console.log(response.data)
             response.data.forEach(room => {
             graph[room.room_id] = {}
+            graph[room.room_id]['title'] = room.title 
             graph[room.room_id]['n'] = room.n
             graph[room.room_id]['s'] = room.s
             graph[room.room_id]['e'] = room.e
@@ -36,7 +37,10 @@ function GameDisplay(props) {
         })
         setMap(graph)
         })
-        
+        .catch(err => {
+            console.error(err)
+            console.log('Error retrieving the map.')
+        })
     }, []);
 
 
@@ -60,7 +64,8 @@ function GameDisplay(props) {
     const handleMove = (e, direction) => {
         e.preventDefault();
         console.log('Moving');
-        axioswithAuth().post('/move/', {"direction": direction})
+        console.log(roomData)
+        axioswithAuth().post('/move/', {"direction": direction,  "next_room_id": `${map[roomData.room_id][direction]}`})
             .then(res => {
                 console.log(res)
                 setroomData(res.data)
