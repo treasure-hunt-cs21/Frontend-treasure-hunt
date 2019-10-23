@@ -46,8 +46,6 @@ const submitDestination = e => {
             </div>
             
             <div className="destination-buttons">
-                <button> Explore Rooms </button>
-
                 <p>Enter to your Destination</p>
                 <input className='destination-input'
                 type='text'

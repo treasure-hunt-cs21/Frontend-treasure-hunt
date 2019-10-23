@@ -91,8 +91,7 @@ function GameDisplay(props) {
             .then(res => {
                 console.log(res)
                 setCooldown(res.data.cooldown)
-                sleep(1000)
-                updateStatus()
+                setTimeout(() => updateStatus(), 7600)
             })
             .catch(error => {
                 console.error(error)
@@ -104,9 +103,9 @@ function GameDisplay(props) {
         console.log('Item dropped');
         axioswithAuth().post('/drop/', {"name": item})
             .then(res => {
+                console.log(res.data)
                 setCooldown(res.data.cooldown)
-                sleep(2000)
-                updateStatus()
+                setTimeout(() => updateStatus(), 7600)
             })
             .catch(error => {
                 console.error(error)
