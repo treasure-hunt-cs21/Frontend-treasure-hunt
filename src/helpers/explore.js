@@ -73,7 +73,7 @@ async function explore() {
     let response = await axioswithAuth().get('/init/')
     rawRoomdata = response.data
 
-    while (/*Object.keys(graph).length*/ abc < 25) {
+    while (Object.keys(graph).length < 200) {
         console.log('==================top of while loop =======================')
         console.log('count is:', abc)
         abc += 1
