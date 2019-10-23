@@ -36,6 +36,10 @@ function GameDisplay(props) {
             graph[room.room_id]['w'] = room.w
         })
         setMap(graph)
+
+        updateStatus()
+        sleep(1000)
+        handleLocation()
         })
         .catch(err => {
             console.error(err)
@@ -57,10 +61,14 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Was a one time use to store the map in our PG database.
     const handleExplore = e => {
         e.preventDefault()
         explore()
     }
+
+    // Normal movement without dashing/flying
     const handleMove = (e, direction) => {
         e.preventDefault();
         console.log('Moving');
@@ -75,76 +83,103 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Pick up item
     const pickItem = (e, item) => {
-        e.preventDefault();
         console.log('Item picked');
         axioswithAuth().post('/take/', {"name": item})
             .then(res => {
                 console.log(res)
-                // setCooldown(res.data.cooldown).then(() => {
-                //     sleep(cooldown * 1000)
-                //     updateStatus()
-                // })
+                setCooldown(res.data.cooldown)
+                sleep(1000)
+                updateStatus()
             })
             .catch(error => {
                 console.error(error)
             })
     }
+
+    // Drop Item
     const dropItem = (e, item) => {
-        e.preventDefault();
         console.log('Item dropped');
         axioswithAuth().post('/drop/', {"name": item})
             .then(res => {
-                setCooldown(res.data.cooldown).then(() => {
-                    sleep(cooldown * 1000)
-                    updateStatus()
-                })
+                setCooldown(res.data.cooldown)
+                sleep(2000)
+                updateStatus()
             })
             .catch(error => {
                 console.error(error)
             })
     }
+
+    // Sell item to shop. Must be at Shop to sell.
     const sellItem = (e, item) => {
-        e.preventDefault();
-        console.log('Selling item');
+        console.log('Selling item', item);
         axioswithAuth().post('/sell/', {"name": item})
             .then(res => {
-                setCooldown(res.data.cooldown).then(() => {
-                    sleep(cooldown * 1000)
-                    axioswithAuth().post('/sell/', {"name": item, "confirm": "yes"})
-                    .then(res => {
-                        // Check this res
-                        setCooldown(res.data.cooldown).then(() => {
-                            sleep(cooldown * 1000)
-                            updateStatus()
-                        })
-                    })
-                    .catch(error => {
-                        console.error(error)
-                    })
+                console.log('Confirming Item Sale.')
+                console.log(res.data)
+                setTimeout(() => confirmSale(item), 3500)
                 })
-            })
             .catch(error => {
                 console.error(error)
             })
     }
+
+    // Updates player information (not roomData)
+    const confirmSale = (item) => {
+        console.log('inside confirmSale')
+        let confirm_obj = {
+            'name': `${item}`,
+            'confirm': "yes",
+        }
+
+        console.log(confirm_obj)
+        axioswithAuth().post('/sell/', confirm_obj)
+            .then(res => {
+                console.log('Item Sold.')
+                console.log(res.data)
+                setCooldown(res.data.cooldown)
+                setTimeout(() => updateStatus(), 3500)
+                })
+            .catch(error => {
+                console.error(error)
+                })
+    }
+
     const updateStatus = e => {
-        e.preventDefault()
         axioswithAuth().post('/status/')
         .then(results => {
             console.log("Updating Status")
             console.log(results.data)
-            setStats(results.data).then(() => {
-                setCooldown(results.data.cooldown)
-            })
+            setStats(results.data)
+            setCooldown(results.data.cooldown)
         })
     }
+
     return (
         <div className="game-display"> 
-            <button onClick={handleExplore}> explore </button>
-            <GameScreen roomData={roomData} cooldown={cooldown} pickItem={pickItem}/>
-            <GameControls pickItem={pickItem} handleMove={handleMove} handleLocation={handleLocation} roomData={roomData} map={map}/>
-            <GameInventory sellItem={sellItem} dropItem={dropItem} stats={stats} updateStatus={updateStatus} cooldown={cooldown} setCooldown={setCooldown}/>
+            {/* <button onClick={handleExplore}> explore </button> */}
+            <GameScreen 
+                roomData={roomData} 
+                cooldown={cooldown} 
+                pickItem={pickItem}/>
+
+            <GameControls 
+                pickItem={pickItem} 
+                handleMove={handleMove} 
+                handleLocation={handleLocation} 
+                roomData={roomData} 
+                map={map}/>
+
+            <GameInventory 
+                sellItem={sellItem} 
+                dropItem={dropItem} 
+                stats={stats} 
+                updateStatus={updateStatus} 
+                cooldown={cooldown} 
+                setCooldown={setCooldown}/>
         </div>
     )
 }
