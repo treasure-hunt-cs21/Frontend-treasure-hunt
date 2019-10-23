@@ -108,21 +108,20 @@ function GameDisplay(props) {
         console.log('Selling item');
         axioswithAuth().post('/sell/', {"name": item})
             .then(res => {
-                setCooldown(res.data.cooldown).then(() => {
-                    sleep(cooldown * 1000)
-                    axioswithAuth().post('/sell/', {"name": item, "confirm": "yes"})
+                console.log('Confirming Item Sale.')
+                sleep(1000)
+                axioswithAuth().post('/sell/', {"name": item, "confirm": "yes"})
                     .then(res => {
-                        // Check this res
-                        setCooldown(res.data.cooldown).then(() => {
-                            sleep(cooldown * 1000)
-                            updateStatus()
-                        })
+                        console.log('Item Sold.')
+                        console.log(res.data)
+                        setCooldown(res.data.cooldown)
+                        sleep(1000)
+                        updateStatus()
                     })
                     .catch(error => {
                         console.error(error)
                     })
                 })
-            })
             .catch(error => {
                 console.error(error)
             })
