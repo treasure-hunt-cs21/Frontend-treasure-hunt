@@ -77,6 +77,7 @@ async function takeItemRoute(graph, starting_room, target_room) {
                         cooldown = newResponse.data.cooldown
                         currentRoom = newResponse.data.room_id
 
+                        console.log(newResponse.data.items)
                         if (newResponse.data.items && newResponse.data.items.length > 0) {
                             console.log('items found in room:', currentRoom)
                             break
