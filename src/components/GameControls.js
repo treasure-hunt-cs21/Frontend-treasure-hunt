@@ -3,6 +3,7 @@ import axios from 'axios';
 
 
 import takeRoute from '../helpers/traversal'
+import takeItemRoute from '../helpers/itemtraversal'
 
 import './styles.scss'
 
@@ -19,10 +20,12 @@ const handleChanges = e => {
     setDestination(e.target.value);
 }
 
-const submitDestination = e => {
+const submitNameDestination = e => {
     e.preventDefault();
     //need to find room id of destination
     let dest = ''
+
+    console.log("Searching for room by Title.")
 
     for (let i = 0; i < 500; i++) {
         if (props.map[i].title == destination){
@@ -33,6 +36,16 @@ const submitDestination = e => {
     takeRoute(props.map, props.roomData.room_id, dest)
 }
 
+
+const submitIDDestination = e => {
+    e.preventDefault()
+    console.log(destination)
+    console.log('Searching for room by Room ID.')
+    let target = +destination
+    console.log('target type', typeof(target))
+    console.log('room_id type:', typeof(props.roomData.room_id))
+    takeRoute(props.map, props.roomData.room_id, target)
+}
 
 const submitItemDestination = e => {
     e.preventDefault();
@@ -45,7 +58,7 @@ const submitItemDestination = e => {
         }
     }
     console.log('Heading towards:', dest);
-    takeRoute(props.map, props.roomData.room_id, dest)
+    takeItemRoute(props.map, props.roomData.room_id, dest)
 }
 
     return (
@@ -66,9 +79,10 @@ const submitItemDestination = e => {
                 type='text'
                 onChange={handleChanges} 
                 placeholder='Destination'/>
-                <button onClick={submitDestination}> 
-                Traverse 
+                <button onClick={submitNameDestination}> 
+                Travel by Name
                 </button>
+                <button onClick={submitIDDestination}> Travel by ID </button>
                 <button onClick={submitItemDestination}>Item Traverse </button>
             </div>
 
