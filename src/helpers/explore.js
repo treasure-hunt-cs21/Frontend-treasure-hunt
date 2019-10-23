@@ -45,9 +45,7 @@ async function explore() {
 
     while (Object.keys(graph).length < 500) {
         console.log('==================top of while loop =======================')
-        // console.log('count is:', abc)
-        // abc += 1
-        // Start of movement
+
         let possible_moves = []
 
         cooldown = rawRoomdata.cooldown
@@ -62,6 +60,7 @@ async function explore() {
         }
 
         console.log("currentRoom", currentRoom)
+        console.log("currentRoom.exits", rawRoomdata.exits)
         console.log("prevRoom", prevRoom)
         console.log("prevMove", prevMove)
 
