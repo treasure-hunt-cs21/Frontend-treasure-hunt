@@ -39,23 +39,11 @@ function bfs(graph, starting_room, target_room) {
 }
 
 // Function that will actually take the route and travel to the room.
-async function takeRoute(starting_room, target_room) {
+async function takeRoute(graph, starting_room, target_room) {
     console.log("===== Travelling to room =====")
     console.log("Starting location:", starting_room)
     console.log("Target location:", target_room)
-
-    let graph = {}
-
-    console.log("===== Getting map data before finding route =====")
-    let graph_response = await axios(`${heroku_url}/api/rooms/`)
-    console.log(graph_response.data)
-    graph_response.data.forEach(room => {
-        graph[room.room_id] = {}
-        graph[room.room_id]['n'] = room.n
-        graph[room.room_id]['s'] = room.s
-        graph[room.room_id]['e'] = room.e
-        graph[room.room_id]['w'] = room.w
-    })
+    
 
     console.log('====== Finding route =======')
     let route_to_take = bfs(graph, starting_room, target_room)
