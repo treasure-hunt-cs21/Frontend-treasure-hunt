@@ -7,6 +7,7 @@ import explore from '../helpers/explore'
 
 import GameScreen from './GameScreen'
 import GameControls from './GameControls'
+import GameInventory from './GameInventory'
 
 import './styles.scss'
 
@@ -50,6 +51,7 @@ function GameDisplay(props) {
             <button onClick={handleExplore}> explore </button>
             <GameScreen roomData={roomData} cooldown={cooldown}/>
             <GameControls handleLocation={handleLocation} roomData={roomData}/>
+            <GameInventory cooldown={cooldown} setCooldown={setCooldown}/>
         </div>
     )
 }
