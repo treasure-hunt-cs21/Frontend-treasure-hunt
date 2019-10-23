@@ -15,36 +15,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-
-// function bfs(Graph, Room) {
-
-// let queue = new Queue()
-// let visited = new Set()
-// queue.enqueue([Room])
-
-// while (queue.size() > 0) {
-//     let route = queue.dequeue()
-//     let room = route[-1]
-
-//     if (visited.has(room) == false) {
-//         visited.add(room)
-
-//         //if we haven't visited it, check all it's neighbors
-//         for (let direction in graph[room]) {
-//             if graph[room][direction] is '?':
-//                 return route
-            
-//             //if it's not ?, it's a possible route to a room with an undiscovered room. Add it to the queue.
-//             // else:
-//             //     route_copy = route.copy()
-//             //     next_room = graph[room][direction]
-//             //     route_copy.append(next_room)
-//             //     queue.enqueue(route_copy)
-//         }   
-//         }
-//     }
-// }
-
 async function explore() {
     
     console.log('exploring')
@@ -73,10 +43,14 @@ async function explore() {
     let response = await axioswithAuth().get('/init/')
     rawRoomdata = response.data
 
+<<<<<<< HEAD
     while (Object.keys(graph).length < 200) {
+=======
+    while (Object.keys(graph).length < 500) {
+>>>>>>> 69139b48da5c54e89b9de9096ddf51457f44823e
         console.log('==================top of while loop =======================')
-        console.log('count is:', abc)
-        abc += 1
+        // console.log('count is:', abc)
+        // abc += 1
         // Start of movement
         let possible_moves = []
 
@@ -129,7 +103,7 @@ async function explore() {
                 console.error(error)
             }
             
-        } else if (prevRoom === null && !graph[currentRoom.room_id]) {
+        } else if (prevRoom === null) {
             try {
                 let response = await axios.post(`${heroku_url}/api/rooms/`, currentRoom)
                 console.log(response)
@@ -190,9 +164,6 @@ async function explore() {
                     for (let direction in graph[currentRoom.room_id]) {
                         if (!moved) {
                             if (graph[currentRoom.room_id][direction] === room) {
-                                // console.log('current room ID', currentRoom.room_id)
-                                // console.log('target room ID', room)
-                                // console.log('Direction', direction)
                             
                                 let movement_obj = {
                                     "direction": `${direction}`,
@@ -231,7 +202,11 @@ async function explore() {
                 }
             }
         } 
-    }              
+    }
+    
+    if (Object.keys(graph).length === 500) {
+        console.log("Exploration complete. Your map is finished.")
+    }
 }
 
 function bfs(graph, Room) {
@@ -263,8 +238,3 @@ function bfs(graph, Room) {
 }
 
 export default explore
-
-
-// route_to_room.forEach(async (room) => {
-    
-// })
