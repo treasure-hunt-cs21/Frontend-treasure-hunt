@@ -30,8 +30,7 @@ const submitDestination = e => {
         }
     }
     console.log('Heading towards:', dest);
-    // async function takeRoute(graph, starting_room, target_room)
-    // takeRoute(props.map, props.roomData.room_id, destination)
+    takeRoute(props.map, props.roomData.room_id, dest)
 }
 
     return (
