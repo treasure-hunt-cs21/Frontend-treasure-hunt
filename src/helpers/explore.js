@@ -44,10 +44,6 @@ async function explore() {
     rawRoomdata = response.data
 
     while (Object.keys(graph).length < 500) {
-        abc++
-        if (abc > 50) {
-
-        }
         console.log('==================top of while loop =======================')
         // console.log('count is:', abc)
         // abc += 1
@@ -103,7 +99,7 @@ async function explore() {
                 console.error(error)
             }
             
-        } else if (prevRoom === null && !graph[currentRoom.room_id]) {
+        } else if (prevRoom === null) {
             try {
                 let response = await axios.post(`${heroku_url}/api/rooms/`, currentRoom)
                 console.log(response)

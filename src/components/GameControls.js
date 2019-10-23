@@ -25,12 +25,12 @@ const submitDestination = e => {
         <div className="controls-container">
             <p> Click a direction to travel, or use the automated explore button to map the islands. </p>
             <div className="d-pad">
-                    <button> N </button>
+                    <button onClick={(e) => props.handleMove(e, "n")}> N </button>
                 <div className='row'>
-                    <button> W </button>
-                    <button> E </button>
+                    <button onClick={(e) => props.handleMove(e, "w")}> W </button>
+                    <button onClick={(e) => props.handleMove(e, "e")}> E </button>
                 </div>
-                    <button> S </button>
+                    <button onClick={(e) => props.handleMove(e, "s")}> S </button>
             </div>
             
             <div className="destination-buttons">

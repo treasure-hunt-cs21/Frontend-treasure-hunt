@@ -46,11 +46,25 @@ function GameDisplay(props) {
         explore()
     }
 
+    const handleMove = (e, direction) => {
+        e.preventDefault();
+        console.log('Moving');
+        axioswithAuth().post('/move/', {"direction": direction})
+            .then(res => {
+                console.log(res)
+                setroomData(res.data);
+                setCooldown(res.data.cooldown)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
     return (
         <div className="game-display"> 
             <button onClick={handleExplore}> explore </button>
             <GameScreen roomData={roomData} cooldown={cooldown}/>
-            <GameControls handleLocation={handleLocation} roomData={roomData}/>
+            <GameControls handleMove={handleMove} handleLocation={handleLocation} roomData={roomData}/>
             <GameInventory cooldown={cooldown} setCooldown={setCooldown}/>
         </div>
     )
