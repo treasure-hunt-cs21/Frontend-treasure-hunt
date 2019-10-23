@@ -61,10 +61,14 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Was a one time use to store the map in our PG database.
     const handleExplore = e => {
         e.preventDefault()
         explore()
     }
+
+    // Normal movement without dashing/flying
     const handleMove = (e, direction) => {
         e.preventDefault();
         console.log('Moving');
@@ -79,6 +83,8 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Pick up item
     const pickItem = (e, item) => {
         console.log('Item picked');
         axioswithAuth().post('/take/', {"name": item})
@@ -92,6 +98,8 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Drop Item
     const dropItem = (e, item) => {
         console.log('Item dropped');
         axioswithAuth().post('/drop/', {"name": item})
@@ -104,12 +112,15 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Sell item to shop. Must be at Shop to sell.
     const sellItem = (e, item) => {
-        console.log('Selling item');
+        console.log('Selling item', item);
         axioswithAuth().post('/sell/', {"name": item})
             .then(res => {
                 console.log('Confirming Item Sale.')
-                sleep(1000)
+                console.log(res.data)
+                sleep(3000)
                 axioswithAuth().post('/sell/', {"name": item, "confirm": "yes"})
                     .then(res => {
                         console.log('Item Sold.')
@@ -126,6 +137,8 @@ function GameDisplay(props) {
                 console.error(error)
             })
     }
+
+    // Updates player information (not roomData)
     const updateStatus = e => {
         axioswithAuth().post('/status/')
         .then(results => {
@@ -135,6 +148,7 @@ function GameDisplay(props) {
             setCooldown(results.data.cooldown)
         })
     }
+
     return (
         <div className="game-display"> 
             {/* <button onClick={handleExplore}> explore </button> */}

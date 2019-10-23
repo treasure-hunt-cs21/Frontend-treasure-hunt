@@ -83,7 +83,6 @@ async function takeRoute(graph, starting_room, target_room) {
                 }
             }
         }
-
         console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
     }   
 }

@@ -61,7 +61,7 @@ function GameInventory(props) {
                         return (<>
                             <li> {item} </li>
                             <button onClick={e => props.dropItem(e, item)}>Drop Item</button>
-                            <button>Sell Item</button> </>
+                            <button onClick = {e => props.sellItem(e, item)}>Sell Item</button> </>
                         )}) : 'Nothing!'}
                 </ul>
                 </div>
