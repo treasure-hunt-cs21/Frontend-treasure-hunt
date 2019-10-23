@@ -46,6 +46,7 @@ function sleep(ms) {
 // }
 
 async function explore() {
+    
     console.log('exploring')
     let graph = {}
     let traversalPath = []
@@ -72,8 +73,10 @@ async function explore() {
     let response = await axioswithAuth().get('/init/')
     rawRoomdata = response.data
 
-    while (/*Object.keys(graph).length*/ abc < 10) {
-        console.log("in while")
+    while (/*Object.keys(graph).length*/ abc < 25) {
+        console.log('==================top of while loop =======================')
+        console.log('count is:', abc)
+        abc += 1
         // Start of movement
         let possible_moves = []
 
@@ -90,6 +93,7 @@ async function explore() {
 
         console.log("currentRoom", currentRoom)
         console.log("prevRoom", prevRoom)
+        console.log("prevMove", prevMove)
 
         // if current room isn't in graph
         if (!graph[currentRoom.room_id]) {
@@ -101,43 +105,38 @@ async function explore() {
         }
 
         if (prevRoom !== null && prevRoom.room_id !== null && prevMove !== null && prevRoom.room_id !== currentRoom.room_id) {
+            console.log('================== INSIDE BIG CONDITIONAL. =======================')
             // send post to update room directions
             // POST '/api/rooms/' currentRoom
             // PUT '/api/rooms/' ?currentRoom= ,previousRoom= ,previousDirection= ,
             graph[prevRoom.room_id][prevMove] = currentRoom.room_id
             graph[currentRoom.room_id][opp_moves[prevMove]] = prevRoom.room_id
+
+            //Copies.
+            let current_copy = {...currentRoom}
+            let previous_copy = {...prevRoom}
+            let prev_move_copy = prevMove
+
             // updating local map
-
-
+            try {
+               let resp1 = await axios.post(`${heroku_url}/api/rooms/`, current_copy)
+               let resp2 = await axios.put(`${heroku_url}/api/rooms?previousRoom=${previous_copy.room_id}&currentRoom=${current_copy.room_id}&previousDirection=${prev_move_copy}`)
+               console.log(resp1)
+               console.log(resp2)
+            }
+            catch (error) {
+                console.log('Try-Catch Error')
+                console.error(error)
+            }
             
-            axios.post(`${heroku_url}/api/rooms/`, currentRoom)
-            // eslint-disable-next-line no-loop-func
-            .then(res => {
-                console.log(res)
-                axios.put(`${heroku_url}/api/rooms?previousRoom=${prevRoom.room_id}&currentRoom=${currentRoom.room_id}&previousDirection=${prevMove}`)
-                .then(res => {
-                    console.log('Move updated.')
-                    console.log(res)
-                })
-                .catch(error => {
-                    console.log("error1", error)
-                    console.error(error)
-                })
-            })
-            .catch(error => {
-                console.log("error2", error)
+        } else if (prevRoom === null && !graph[currentRoom.room_id]) {
+            try {
+                let response = await axios.post(`${heroku_url}/api/rooms/`, currentRoom)
+                console.log(response)
+            }
+            catch (error) {
                 console.error(error)
-            })
-        } else if (prevRoom === null) {
-            axios.post(`${heroku_url}/api/rooms/`, currentRoom)
-            // eslint-disable-next-line no-loop-func
-            .then(res => {
-                console.log("First room posted!")
-            })
-            .catch(error => {
-                console.log("error2", error)
-                console.error(error)
-            })
+            }
         }
 
 
@@ -148,6 +147,7 @@ async function explore() {
         }
 
         if (deadend === false) {
+            console.log('================== NOT DEADEND =======================')
             // Find possible moves (moves towards an unexplored room)
             for (let direction in graph[currentRoom.room_id]) {
                 if (graph[currentRoom.room_id][direction] === 999) {
@@ -172,23 +172,66 @@ async function explore() {
             cooldown = newResponse.data.cooldown
             rawRoomdata = newResponse.data
             // console.log("cooldown2", cooldown)
-            prevRoom = currentRoom
+            prevRoom = {...currentRoom}
             prevMove = move
         } else {
             //is a deadend
-            console.log('Deadend!')
-            
+            console.log('==================DEADEND BLOCK=======================')
             //find closest unexplored room
             let route_to_room = bfs(graph, currentRoom.room_id)
-
             if (route_to_room) {
                 route_to_room.shift()
-            }
+                console.log('post-shift', route_to_room)
+                let moved = false
+                while (route_to_room.length > 0) {
+                    let room = route_to_room.shift()
+                    moved = false
+                    console.log('backtrack room', room)
+                    for (let direction in graph[currentRoom.room_id]) {
+                        if (!moved) {
+                            if (graph[currentRoom.room_id][direction] === room) {
+                                // console.log('current room ID', currentRoom.room_id)
+                                // console.log('target room ID', room)
+                                // console.log('Direction', direction)
+                            
+                                let movement_obj = {
+                                    "direction": `${direction}`,
+                                    "next_room_id": `${room}`
+                                }
+                                
+                                console.log('cooldown pre-sleep:', cooldown)
+                                await sleep(cooldown * 1000)
+                                console.log("backtrack room")
+                    
+                                // move
+                                let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
+                                cooldown = newResponse.data.cooldown
+                                console.log('cooldown set: ', cooldown)
+                                rawRoomdata = newResponse.data
 
-        }              
-        // if we are at a deadend, we need to look for the closest room with an unexplored route in our map. 
-        abc += 1
-    }
+                                
+                                prevMove = direction
+                                prevRoom = {...currentRoom}
+
+                                currentRoom = {
+                                    room_id: rawRoomdata.room_id,
+                                    title: rawRoomdata.title,
+                                    description: rawRoomdata.description,
+                                    coordinates: rawRoomdata.coordinates,
+                                    elevation: rawRoomdata.elevation,
+                                    terrain: rawRoomdata.terrain,
+                                }
+                                moved = true
+
+                                console.log('backtrack - prevRoom', prevRoom)
+                                console.log('backtrack - currentRoom', currentRoom)
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+    }              
 }
 
 function bfs(graph, Room) {
@@ -218,31 +261,10 @@ function bfs(graph, Room) {
         }
     }
 }
-    //     #if we are at a deadend, what do we do? We backtrack, and find the closest room with an unexplored route
-    //     else:
-    //         #use BFS to find the closest room with unexplored route. Will return a list of roomIDs
-    //         route = bfs(graph, currentRoom)
-
-    //         # because the route doesn't actually move us, we can simply move towards the rooms designated in
-    //         # it in order to keep adding to our traversalPath
-    //         if route is not None:
-    //             # take off the first room (which is the current one)
-    //             route.pop(0)
-    //             for room in route:
-    //                 moved = False
-    //                 # print('Inside: ', player.currentRoom.id)
-    //                 # print('Looking for: ', room)
-    //                 for direction in graph[player.currentRoom.id]:
-    //                     if moved is False:
-    //                         # print('ROOM to', direction, 'IS: ', graph[player.currentRoom.id][direction])
-    //                         if graph[player.currentRoom.id][direction] is room:
-    //                             # print('MOVING ', direction, 'TO ROOM: ', graph[player.currentRoom.id][direction])
-    //                             prevMove = direction
-    //                             prevRoom = player.currentRoom.id
-    //                             traversalPath.append(direction)
-    //                             player.travel(direction)
-    //                             # print('new current room after travel: ', player.currentRoom.id)
-    //                             moved = True
-
 
 export default explore
+
+
+// route_to_room.forEach(async (room) => {
+    
+// })
