@@ -37,7 +37,7 @@ curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607'
 
 function GameInventory(props) {
     const [coins, setCoins] = useState('')
-
+    let count = 0
     const updateLambdaCoins = e => {
         e.preventDefault()
         axioswithAuth().get('https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/')
@@ -71,10 +71,11 @@ function GameInventory(props) {
                 <ul>
                     {props.stats.inventory ? props.stats.inventory.map(item =>
                     {
-                        return (<>
+                        count++
+                        return (<div key={count}>
                             <li> {item} </li>
                             <button onClick={e => props.dropItem(item)}>Drop Item</button>
-                            <button onClick = {e => props.sellItem(item)}>Sell Item</button> </>
+                            <button onClick = {e => props.sellItem(item)}>Sell Item</button> </div>
                         )}) : 'Nothing!'}
                 </ul>
                 </div>

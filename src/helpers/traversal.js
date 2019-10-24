@@ -77,15 +77,22 @@ async function takeRoute(graph, starting_room, target_room) {
                         // Add flight support for terrain 'MOUNTAIN'
                         // Potentially add Dash somehow??
                         if (graph[room].terrain === 'MOUNTAIN') {
-                            console.log("It's a mountain a dumby. FLY!!")
-                            
-                        }
-                        let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
-                        cooldown = newResponse.data.cooldown
-                        currentRoom = newResponse.data.room_id
+                            console.log("It's a mountain dumbo. FLY!!")
+                            let flyResponse = await axioswithAuth().post(`${production_url}/fly/`, movement_obj)
+                            cooldown = flyResponse.data.cooldown
+                            currentRoom = flyResponse.data.room_id
 
-                        moved = true
-                        console.log('Moved to:', currentRoom)
+                            moved = true
+                            console.log('Flew to:', currentRoom)
+                        } else {
+
+                            let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
+                            cooldown = newResponse.data.cooldown
+                            currentRoom = newResponse.data.room_id
+
+                            moved = true
+                            console.log('Moved to:', currentRoom)
+                        }
                     }
                 }
             }
