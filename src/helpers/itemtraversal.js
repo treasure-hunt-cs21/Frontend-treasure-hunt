@@ -56,11 +56,11 @@ async function takeItemRoute(graph, starting_room, target_room) {
         route_to_take.shift()
         console.log('post-shift', route_to_take)
         let moved = false
+        let foundItem = false
 
-        while (route_to_take.length > 0) {
+        while (route_to_take.length > 0 && !foundItem) {
             let room = route_to_take.shift()
             moved = false
-            let foundItem = false
             console.log('Travelling to room:', room)
 
             for (let direction in graph[currentRoom]) {
@@ -82,19 +82,18 @@ async function takeItemRoute(graph, starting_room, target_room) {
                         if (newResponse.data.items && newResponse.data.items.length > 0) {
                             console.log('items found in room:', currentRoom)
                             foundItem = true
-                            break
                         }
-
                         moved = true
                         console.log('Moved to:', currentRoom)
                     }
-                } else {
-                    console.log("I think there is an item here.")
-                    break
-                }
+                } 
             }
         }
-        console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
+        if (foundItem === true) {
+            console.log("Stopped because an item is present.")
+        } else {
+            console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
+        }
     }   
 }
 
