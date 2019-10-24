@@ -23,10 +23,16 @@ $color5: #BB7E5D;
 
 
 // Game
-.game-display {
-    display: flex;
+.game-container {
     justify-content: center;
+
+    .game-display {
+        display: flex;
+        justify-content: center;
+    }
 }
+
+
 
 // GameScreen
 
@@ -45,4 +51,39 @@ $color5: #BB7E5D;
     padding: 10px;
     border: 1px solid black;
     width: 25%;
+}
+
+// GameInventory
+
+.player-status {
+    display: flex;
+    justify-content: center;
+
+    .status-container {
+        background-color: black;
+        color: white;
+        padding: 10px;
+        height: 250px;
+        width: 10%;
+    }
+
+    .player-inventory {
+        padding: 10px;
+        background-color: black;
+        color: white;
+        height: 250px;
+        width: 40%;
+
+        .inventory-list {
+            .inventory-item {
+                .inventory-button {
+                    padding-left: 10px;
+                }
+            }
+        }
+    }
+}
+
+#inventory-btn {
+    margin-left: 10px;
 }

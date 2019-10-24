@@ -8,9 +8,7 @@ const GamePage = () => {
     return(
         <div className="game-page">
             <TopBar where='game'/>
-            <div className="game-container">
                 <Game />
-            </div>
         </div>
     )
 }

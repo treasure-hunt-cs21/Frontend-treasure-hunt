@@ -30,31 +30,35 @@ function GameInventory(props) {
 
     return (
         <div className="player-status">
-            <button onClick={props.updateStatus}> Check Status</button>
+            <div className="status-container">
+            <button onClick={props.updateStatus}
+            className="status-btn"> Check Status</button>
             <p> Strength: { props.stats.strength ? props.stats.strength : ''}</p>
             <p> Encumbrance: {props.stats.encumbrance ? props.stats.encumbrance : ''}</p>
             <p> Speed: {props.stats.speed ? props.stats.speed : ''}</p>
             <p> Gold: {props.stats.gold ? props.stats.gold : ''}</p>
+
+            <button onClick={updateLambdaCoins}
+                className="lambda-coin-update-btn"> 
+                    Check Lambda Coins
+            </button>
+            <p> Lambda Coin: {coins ? coins : 'None'} </p>
+            </div>
+
             <div className="player-inventory">
-                Currently Carrying:
+                <h4>Currently Carrying:</h4>
                 {/* {props.stats.inventory ? <button onClick={sellAllHandler}> Sell All</button> : null} */}
-                <ul>
+                <ul className="inventory-list">
                     {props.stats.inventory ? props.stats.inventory.map(item =>
                     {
                         count++
-                        return (<div key={count}>
-                            <li> {item} </li>
-                            <button onClick={e => props.dropItem(item)}>Drop Item</button>
-                            <button onClick = {e => props.sellItem(item)}>Sell Item</button> </div>
+                        return (
+                            <li className="inventory-item"> {item} 
+                            <button id="inventory-btn" onClick={e => props.dropItem(item)}>Drop Item</button>
+                            <button id="inventory-btn" onClick = {e => props.sellItem(item)}>Sell Item</button>
+                            </li>
                         )}) : 'Nothing!'}
                 </ul>
-                </div>
-            <div className="lambda-coins-display"> 
-                <button onClick={updateLambdaCoins}
-                className="lambda-coin-update-btn"> 
-                    Check Lambda Coins
-                </button>
-                <p> Lambda Coin: {coins ? coins : ''} </p>
             </div>
         </div>
     )
