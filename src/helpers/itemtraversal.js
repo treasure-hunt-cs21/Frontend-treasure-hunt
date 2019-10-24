@@ -60,10 +60,11 @@ async function takeItemRoute(graph, starting_room, target_room) {
         while (route_to_take.length > 0) {
             let room = route_to_take.shift()
             moved = false
+            let foundItem = false
             console.log('Travelling to room:', room)
 
             for (let direction in graph[currentRoom]) {
-                if (!moved) {
+                if (!moved && !foundItem) {
                     if (graph[currentRoom][direction] === room) {
                         let movement_obj = {
                             "direction" : `${direction}`,
@@ -80,12 +81,16 @@ async function takeItemRoute(graph, starting_room, target_room) {
                         console.log(newResponse.data.items)
                         if (newResponse.data.items && newResponse.data.items.length > 0) {
                             console.log('items found in room:', currentRoom)
+                            foundItem = true
                             break
                         }
 
                         moved = true
                         console.log('Moved to:', currentRoom)
                     }
+                } else {
+                    console.log("I think there is an item here.")
+                    break
                 }
             }
         }
