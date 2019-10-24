@@ -38,8 +38,6 @@ function GameDisplay(props) {
         setMap(graph)
 
         updateStatus()
-        sleep(1000)
-        handleLocation()
         })
         .catch(err => {
             console.error(err)
