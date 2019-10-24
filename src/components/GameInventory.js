@@ -4,37 +4,6 @@ import axioswithAuth from '../helpers/axioswithAuth'
 
 import './styles.scss'
 
-/**
- * curl -X POST -H 'Authorization: Token xxxxxxxxxx' 
- * -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
- * 
- * 
- * 
- * {
-  "name": "br80",
-  "cooldown": 2.0,
-  "encumbrance": 2,  // How much are you carrying?
-  "strength": 10,  // How much can you carry?
-  "speed": 10,  // How fast do you travel?
-  "gold": 400,
-  "inventory": ["Small Treasure"],
-  "status": [],
-  "errors": [],
-  "messages": []
-}
-
-
-curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607'
- https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/
-
- {
-   "cooldown": 1.0,
-   "messages": ["You have a balance of 35.0 Lambda Coins"],
-   "errors": []
-}
- */
-
-
 function GameInventory(props) {
     const [coins, setCoins] = useState('')
     let count = 0
@@ -42,8 +11,9 @@ function GameInventory(props) {
         e.preventDefault()
         axioswithAuth().get('https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/')
         .then(results => {
-            console.log(results.data)
-            // setCoins(results.data.messages)
+            let coin_string = results.data.messages
+            // console.log(coin_string[0].match(/(\d+)/g)[0])
+            setCoins(coin_string[0].match(/(\d+)/g)[0])
         })
     }
     
@@ -90,25 +60,3 @@ function GameInventory(props) {
     )
 }
 export default GameInventory;
-
-
-// {props.stats.items ? 
-//     `Items: ${props.stats.inventory.map(item => 
-//         { 
-//             return (
-//                 <div>
-//                     {item}
-//                     <button onClick={e => props.dropItem(e, item)}>Drop</button>
-//                     <button onClick={e => props.sellItem(e, item)}>sell</button>
-//                 </div>
-//             )
-//         })}` 
-//     : 
-//     ''}
-
-{/* <div className="player-inventory">
-                Currently Carrying:
-                <ul>
-                    {stats}
-                </ul>
-</div> */}

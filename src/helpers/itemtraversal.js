@@ -99,8 +99,6 @@ async function takeItemRoute(graph, starting_room, target_room) {
                             moved = true
                             console.log('Moved to:', currentRoom)
                         }
-                        
-                        
                     }
                 } 
             }
