@@ -73,17 +73,34 @@ async function takeItemRoute(graph, starting_room, target_room) {
                         
                         // console.log('cooldown pre-sleep:', cooldown)
                         await sleep(cooldown * 1000)
-                        
-                        let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
-                        cooldown = newResponse.data.cooldown
-                        currentRoom = newResponse.data.room_id
+                        if (graph[room].terrain === 'MOUNTAIN') {
+                            console.log("It's a mountain dumbo. FLY!!")
+                            let flyResponse = await axioswithAuth().post(`${production_url}/fly/`, movement_obj)
+                            cooldown = flyResponse.data.cooldown
+                            currentRoom = flyResponse.data.room_id
 
-                        if (newResponse.data.items && newResponse.data.items.length > 0) {
-                            console.log('items found in room:', currentRoom)
-                            foundItem = true
+                            
+                            if (flyResponse.data.items && flyResponse.data.items.length > 0) {
+                                console.log('items found in room:', currentRoom)
+                                foundItem = true
+                            }
+
+                            moved = true
+                            console.log('Flew to:', currentRoom)
+                        } else {
+                            let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
+                            cooldown = newResponse.data.cooldown
+                            currentRoom = newResponse.data.room_id
+
+                            if (newResponse.data.items && newResponse.data.items.length > 0) {
+                                console.log('items found in room:', currentRoom)
+                                foundItem = true
+                            }
+                            moved = true
+                            console.log('Moved to:', currentRoom)
                         }
-                        moved = true
-                        console.log('Moved to:', currentRoom)
+                        
+                        
                     }
                 } 
             }
