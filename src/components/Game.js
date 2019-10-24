@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import axioswithAuth from '../helpers/axioswithAuth';
+import axioswithAuthMine from '../helpers/axioswithAuthMine';
 import explore from '../helpers/explore'
 import GameScreen from './GameScreen'
 import GameControls from './GameControls'
@@ -15,7 +16,7 @@ function GameDisplay(props) {
     const [cooldown, setCooldown] = useState(0);
     const [stats, setStats] = useState({})
     const [map, setMap] = useState({});
-
+    const [proof, setProof] = useState({})
 
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -157,6 +158,37 @@ function GameDisplay(props) {
         })
     }
 
+    const mine = e => {
+        e.preventDefault()
+
+        for (let i = 0; i < Infinity; i++) {
+            let new_proof = i;
+
+            axioswithAuthMine().post('/mine/', {"proof":new_proof})
+            .then(results => {
+                console.log(results.data)
+                setStats(results.data)
+                setCooldown(results.data.cooldown)
+            })
+            .then(() => {
+                sleep(cooldown)
+            })
+        }
+    }
+
+    const getProof = e => {
+        e.preventDefault()
+        axioswithAuthMine().get('/last_proof/')
+            .then(results => {
+                console.log(results.data)
+                setStats(results.data)
+                setCooldown(results.data.cooldown)
+            })
+            .then(() => {
+                sleep(cooldown)
+            })
+    }
+
     return (
         <div className="game-display"> 
             {/* <button onClick={handleExplore}> explore </button> */}
@@ -170,7 +202,10 @@ function GameDisplay(props) {
                 handleMove={handleMove} 
                 handleLocation={handleLocation} 
                 roomData={roomData} 
-                map={map}/>
+                map={map}
+                mine={mine}
+                proof={getProof}/>
+
 
             <GameInventory 
                 sellItem={sellItem} 

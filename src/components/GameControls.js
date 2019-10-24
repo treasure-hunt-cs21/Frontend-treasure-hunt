@@ -75,6 +75,10 @@ const submitItemDestination = e => {
             <div className="misc-buttons">
                 <button onClick={props.handleLocation}> Current Location </button>
             </div>
+            <div className="misc-buttons">
+                <button onClick={e => props.mine(e)}>Mine</button>
+                <button onClick={e => props.proof(e)}>Get proof</button>
+            </div>
         </div>
     )
 }
