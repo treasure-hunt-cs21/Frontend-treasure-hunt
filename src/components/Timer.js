@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from 'react';
 
-function Timer(){
-  const [mins,setMins] = useState(0);
+function Timer(props){
+  // const [mins,setMins] = useState(0);
   const [secs,setSecs] = useState(0);
   
 
   const myInterval = setInterval(() => {
     const seconds = secs
-    const minutes = mins
+    // const minutes = mins
 
     if(seconds > 0) {
       setSecs(seconds-1)
     }
 
     if(seconds === 0){
-      if (minutes === 0 ){
-        clearInterval(myInterval)
-      }
-      else{
-        setMins(minutes-1)
+      // if (minutes === 0 ){
+      //   clearInterval(myInterval)
+      // }
+      
+        // setMins(minutes-1)
         setSecs(seconds-1)
-      }
     }
+    
   },1000)
 
   return (
     <div>
-        { mins === 0 && secs === 0
+        { secs === 0
             ? <h1>Busted!</h1>
-            : <h1>Time Remaining: {mins}:{secs < 10 ? `0${secs}` : secs}</h1>
+            : <h1>Time Remaining: {secs < 10 ? `0${secs}` : secs}</h1>
         }
     </div>
 )

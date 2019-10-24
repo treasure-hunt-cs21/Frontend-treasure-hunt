@@ -42,8 +42,12 @@ function GameInventory(props) {
         e.preventDefault()
         axioswithAuth().get('https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/')
         .then(results => {
-            console.log(results.data)
-            // setCoins(results.data.messages)
+            let temp = results.data.messages[0]
+            // console.log(temp[0])
+            temp = temp.split(' ')
+            console.log(temp[5])
+
+            setCoins(temp[5])
         })
     }
     
