@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axioswithAuth from '../helpers/axioswithAuth'
 import axios from 'axios';
 
 
@@ -10,6 +11,7 @@ import './styles.scss'
 function GameControls(props) {
     
 const [destination, setDestination] = useState('');
+const [examine, setExamine] = useState('');
     
 
 // Handles the destination traversal
@@ -18,6 +20,11 @@ const [destination, setDestination] = useState('');
 const handleChanges = e => {
     e.preventDefault();
     setDestination(e.target.value);
+}
+
+const handleExamineChanges = e => {
+    e.preventDefault();
+    setExamine(e.target.value)
 }
 
 const submitNameDestination = e => {
@@ -61,6 +68,18 @@ const submitItemDestination = e => {
     takeItemRoute(props.map, props.roomData.room_id, dest)
 }
 
+const submitExamine = e => {
+    e.preventDefault();
+    let examine_obj = {
+        "name" : examine
+    }
+    axioswithAuth().post('/examine/', examine_obj)
+    .then(results => {
+        console.log(results.data)
+        console.log(results.data.description)
+    })
+}
+
     return (
         <div className="controls-container">
             <p> Click a direction to travel, or use the automated explore button to map the islands. </p>
@@ -87,6 +106,11 @@ const submitItemDestination = e => {
             </div>
 
             <div className="misc-buttons">
+                <input type="text"
+                placeholder="Examine"
+                className="examine-input"
+                onChange={handleExamineChanges} />
+                <button onClick={submitExamine}> Examine </button>
                 <button onClick={props.handleLocation}> Current Location </button>
             </div>
         </div>

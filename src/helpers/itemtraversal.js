@@ -56,40 +56,58 @@ async function takeItemRoute(graph, starting_room, target_room) {
         route_to_take.shift()
         console.log('post-shift', route_to_take)
         let moved = false
+        let foundItem = false
 
-        while (route_to_take.length > 0) {
+        while (route_to_take.length > 0 && !foundItem) {
             let room = route_to_take.shift()
             moved = false
             console.log('Travelling to room:', room)
 
             for (let direction in graph[currentRoom]) {
-                if (!moved) {
+                if (!moved && !foundItem) {
                     if (graph[currentRoom][direction] === room) {
                         let movement_obj = {
                             "direction" : `${direction}`,
                             "next_room_id": `${room}`
                         }
                         
-                        console.log('cooldown pre-sleep:', cooldown)
+                        // console.log('cooldown pre-sleep:', cooldown)
                         await sleep(cooldown * 1000)
-                        
-                        let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
-                        cooldown = newResponse.data.cooldown
-                        currentRoom = newResponse.data.room_id
+                        if (graph[room].terrain === 'MOUNTAIN') {
+                            console.log("It's a mountain dumbo. FLY!!")
+                            let flyResponse = await axioswithAuth().post(`${production_url}/fly/`, movement_obj)
+                            cooldown = flyResponse.data.cooldown
+                            currentRoom = flyResponse.data.room_id
 
-                        console.log(newResponse.data.items)
-                        if (newResponse.data.items && newResponse.data.items.length > 0) {
-                            console.log('items found in room:', currentRoom)
-                            break
+                            
+                            if (flyResponse.data.items && flyResponse.data.items.length > 0) {
+                                console.log('items found in room:', currentRoom)
+                                foundItem = true
+                            }
+
+                            moved = true
+                            console.log('Flew to:', currentRoom)
+                        } else {
+                            let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
+                            cooldown = newResponse.data.cooldown
+                            currentRoom = newResponse.data.room_id
+
+                            if (newResponse.data.items && newResponse.data.items.length > 0) {
+                                console.log('items found in room:', currentRoom)
+                                foundItem = true
+                            }
+                            moved = true
+                            console.log('Moved to:', currentRoom)
                         }
-
-                        moved = true
-                        console.log('Moved to:', currentRoom)
                     }
-                }
+                } 
             }
         }
-        console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
+        if (foundItem === true) {
+            console.log(`Stopped because an item is present. Wait for a cooldown of ${cooldown} seconds before proceeding.`)
+        } else {
+            console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
+        }
     }   
 }
 

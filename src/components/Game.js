@@ -31,7 +31,8 @@ function GameDisplay(props) {
             console.log(response.data)
             response.data.forEach(room => {
             graph[room.room_id] = {}
-            graph[room.room_id]['title'] = room.title 
+            graph[room.room_id]['title'] = room.title
+            graph[room.room_id]['terrain'] = room.terrain 
             graph[room.room_id]['n'] = room.n
             graph[room.room_id]['s'] = room.s
             graph[room.room_id]['e'] = room.e
@@ -158,8 +159,8 @@ function GameDisplay(props) {
     }
 
     return (
+        <div className = "game-container">
         <div className="game-display"> 
-            {/* <button onClick={handleExplore}> explore </button> */}
             <GameScreen 
                 roomData={roomData} 
                 cooldown={cooldown} 
@@ -171,8 +172,8 @@ function GameDisplay(props) {
                 handleLocation={handleLocation} 
                 roomData={roomData} 
                 map={map}/>
-
-            <GameInventory 
+        </div>
+        <GameInventory 
                 sellItem={sellItem} 
                 dropItem={dropItem} 
                 stats={stats} 
