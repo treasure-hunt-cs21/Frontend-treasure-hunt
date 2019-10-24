@@ -6,6 +6,7 @@ import { Queue, Stack } from './utilities'
 let production_url = 'https://lambda-treasure-hunt.herokuapp.com/api/adv'
 let heroku_url = 'https://treasurebuildweek.herokuapp.com'
 
+let terrain_types = ['NORMAL', 'MOUNTAIN', 'CAVE', 'TRAP']
 
 // Helps deal with cooldown
 function sleep(ms) {
@@ -73,6 +74,12 @@ async function takeRoute(graph, starting_room, target_room) {
                         console.log('cooldown pre-sleep:', cooldown)
                         await sleep(cooldown * 1000)
                         
+                        // Add flight support for terrain 'MOUNTAIN'
+                        // Potentially add Dash somehow??
+                        if (graph[room].terrain === 'MOUNTAIN') {
+                            console.log("It's a mountain a dumby. FLY!!")
+                            
+                        }
                         let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
                         cooldown = newResponse.data.cooldown
                         currentRoom = newResponse.data.room_id

@@ -71,14 +71,13 @@ async function takeItemRoute(graph, starting_room, target_room) {
                             "next_room_id": `${room}`
                         }
                         
-                        console.log('cooldown pre-sleep:', cooldown)
+                        // console.log('cooldown pre-sleep:', cooldown)
                         await sleep(cooldown * 1000)
                         
                         let newResponse = await axioswithAuth().post(`${production_url}/move/`, movement_obj)
                         cooldown = newResponse.data.cooldown
                         currentRoom = newResponse.data.room_id
 
-                        console.log(newResponse.data.items)
                         if (newResponse.data.items && newResponse.data.items.length > 0) {
                             console.log('items found in room:', currentRoom)
                             foundItem = true
@@ -90,7 +89,7 @@ async function takeItemRoute(graph, starting_room, target_room) {
             }
         }
         if (foundItem === true) {
-            console.log("Stopped because an item is present.")
+            console.log(`Stopped because an item is present. Wait for a cooldown of ${cooldown} seconds before proceeding.`)
         } else {
             console.log(`Route to room finished. Please wait ${cooldown} seconds before proceeding.`)
         }
